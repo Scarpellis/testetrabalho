@@ -1,0 +1,318 @@
+Main
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$ ###0.00;-$ ###0.00';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='M/D/YYYY';
+SET TimestampFormat='M/D/YYYY h:mm:ss[.fff] TT';
+SET FirstWeekDay=6;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='en-US';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+SET LongMonthNames='January;February;March;April;May;June;July;August;September;October;November;December';
+SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+SET LongDayNames='Monday;Tuesday;Wednesday;Thursday;Friday;Saturday;Sunday';
+SET NumericalAbbreviation='3:k;6:M;9:G;12:T;15:P;18:E;21:Z;24:Y;-3:m;-6:?;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+
+//----------------------------------------------------------------------------------------------------------------------//
+1. Fato
+Fato:
+LOAD
+    %Cliente,
+    %Data_ID,
+    "%Filial CNPJ",
+    %Key_M2,
+    %Key_M2_Chave1,
+    %Key_M2_Chave2,
+    %Key_M2_Chave3,
+    %Mes_Ano_Produto,
+    %Produto,
+    "Chave da Nota Fiscal",
+    "Código Depósito"						AS Depósito,
+    "Código Natureza Operação",
+    "Código Sefaz Situação",
+    "Custo Produto",
+    "Data Criação Pedido",
+    "Data Documento",
+    "Data Estoque Histórico",
+    "Data Lançamento Fiscal",
+    "Data Primeira Compra Agrupada",
+    "Descrição Sefaz Situação",
+    "Fat. Previsto Onous",
+    "Fato Origem",
+    "Flag Comparável",
+    "Flag Considera NFe",
+    "Flag Encerrado",
+    "Flag M2",
+    "Flag Soma_Relatório",
+    FlagAreaTotal,
+    "Forma de Pagamento",
+    "Índice Ac. Por Filial/Mês",
+    "Índice Diário Proj.",
+    "Mês Previsão Entrega",
+    "Mês-Ano",
+    "Meta conservadora",
+    "Meta Diária",
+    "Meta original",
+    "Meta revisada",
+    "Natureza Operação Desc.",
+    "Natureza Operação Pedido",
+    "NF Gerada Pedido",
+    "Nota Fiscal",
+    "Nota Fiscal Série",
+    "Número do Pedido",
+    "Preço Custo Estoque",
+    "Preço Custo Produto",
+    "Preço Venda Estoque",
+    "Previsão Entrega Pedido",
+    "Produto Idade",
+    "Proj. TT",
+    Série,
+    "Status Pedido",
+    "Tipo Frete Pedido",
+    "Tipo Operação",
+    "Tipo Transação",
+    Tipo_Movimento,
+    "Valor Unitario",
+    "Valor Unitário Produto Pedido",
+    "Qtd.Vendas Previsto Onous",
+    "Quantidade Entregue Produto Pedido",
+    "Quantidade Estoque Histórico",
+    "Quantidade Pendente Produto Pedido",
+    "Quantidade Produto",
+    "Quantidade Produto Pedido",
+    "Valor Desconto",
+    "Valor Frete",
+    "Valor Frete Pedido",
+    "Valor Líquido",
+    "Valor Preço Custo",
+    "Valor Total",
+    "Valor Total Pedido",
+    "Preço Venda Estoque Atual",
+    "Preço Venda Estoque Histórico",
+    'Estoque' 							AS BASE
+FROM [lib://DWH_QMAIS:DataFiles/DWH_fato_Movimentos_Estoque.qvd]
+(qvd);
+
+Concatenate (Fato)
+LOAD
+    %Cliente,
+    %Data_ID,
+    "%Filial CNPJ",
+    %Key_M2,
+    %Key_M2_Chave1,
+    %Key_M2_Chave2,
+    %Key_M2_Chave3,
+    %Produto,
+    "Chave da Nota Fiscal",
+    "Código Depósito",
+    "Código Natureza Operação",
+    "Código Sefaz Situação",
+    "Data Documento",
+    "Data Estoque atual",
+    "Data Lançamento Fiscal",
+    "Data Pedido",
+    "Data Primeira Compra Agrupada",
+    "Descrição Sefaz Situação",
+    "Fato Origem",
+    "Flag Considera NFe",
+    "Flag M2",
+    "Flag Soma_Relatório",
+    "Forma de Pagamento",
+    "Índice Ac. Por Filial/Mês",
+    "Índice Diário Proj.",
+    "Meta conservadora",
+    "Meta Diária",
+    "Meta original",
+    "Meta revisada",
+    "Natureza Operação Desc.",
+    "Natureza Operação Pedido",
+    "NF Gerada Pedido",
+    "Nota Fiscal",
+    "Nota Fiscal Série",
+    "Número do Pedido",
+    "Previsão Entrega Pedido",
+    "Produto Idade",
+    "Proj. TT",
+    Série,
+    "Status Pedido",
+    "Tipo Frete Pedido",
+    "Tipo Operação",
+    "Tipo Transação",
+    Tipo_Movimento,
+    "Quantidade Estoque atual",
+    "Quantidade Produto",
+    "Quantidade Produto Pedido",
+    "Valor Desconto",
+    "Valor Frete",
+    "Valor Frete Pedido",
+    "Valor Líquido",
+    "Valor Preço Custo",
+    "Valor Total",
+    "Valor Total Pedido",
+    "Valor Unitario",
+    "Valor Unitário Produto Pedido",
+    'Mov'							AS BASE
+FROM [lib://DWH_QMAIS:DataFiles/DWH_fato_Movimentos.qvd]
+(qvd);
+
+Concatenate (Fato)
+LOAD
+    %Cliente,
+    %Data_ID,
+    "%Filial CNPJ",
+    %Key_M2,
+    %Key_M2_Chave1,
+    %Key_M2_Chave2,
+    %Key_M2_Chave3,
+    %Mes_Ano_Produto,
+    %Produto,
+    %Produto_Empresa,
+    "Chave da Nota Fiscal",
+    "Código Depósito",
+    "Código Natureza Operação",
+    "Código Sefaz Situação",
+    "Custo Médio Produto",
+    "Custo Produto",
+    "Data Criação Pedido",
+    "Data Documento",
+    "Data Estoque Histórico",
+    "Data Lançamento Fiscal",
+    "Data Primeira Compra Agrupada",
+    "Descrição Sefaz Situação",
+    empresa,
+    "Fat. Previsto Onous",
+    "Fato Origem",
+    "Flag Comparável",
+    "Flag Considera NFe",
+    "Flag Encerrado",
+    "Flag M2",
+    "Flag Soma_Relatório",
+    FlagAreaTotal,
+    "Forma de Pagamento",
+    "Índice Ac. Por Filial/Mês",
+    "Índice Diário Proj.",
+    "Mês Previsão Entrega",
+    "Mês-Ano",
+    "Meta conservadora",
+    "Meta Diária",
+    "Meta original",
+    "Meta revisada",
+    "Natureza Operação Desc.",
+    "Natureza Operação Pedido",
+    "NF Gerada Pedido",
+    "Nota Fiscal",
+    "Nota Fiscal Série",
+    "Número do Pedido",
+    "Preço Custo Estoque",
+    "Preço Custo Produto",
+    "Preço de Tabela",
+    "Preço Venda Estoque",
+    "Preço Venda Original (PVO)",
+    "Previsão Entrega Pedido",
+    "Produto Idade",
+    "Proj. TT",
+    Série,
+    "Status Pedido",
+    "Tipo Frete Pedido",
+    "Tipo Operação",
+    "Tipo Transação",
+    Tipo_Movimento,
+    "Valor Unitario",
+    "Valor Unitário Produto Pedido",
+    "Qtd.Vendas Previsto Onous",
+    "Quantidade Entregue Produto Pedido",
+    "Quantidade Estoque Histórico",
+    "Quantidade Pendente Produto Pedido",
+    "Quantidade Produto",
+    "Quantidade Produto Pedido",
+    "Valor Desconto",
+    "Valor Frete",
+    "Valor Frete Pedido",
+    "Valor Líquido",
+    "Valor Preço Custo",
+    "Valor Total",
+    "Valor Total Pedido",
+    'Venda'						AS BASE
+FROM [lib://DWH_QMAIS:DataFiles/DWH_fato_Movimentos_Vendas_Metas.qvd]
+(qvd);
+//-------------------------------------------------------------------------------------------------------------------------//
+2. Dimensões
+LOAD
+    %Data_ID,
+    Ano,
+    Data,
+    Dia,
+    "Dia da Semana",
+    "Flag YTD Ano Anterior",
+    "Flag YTD Ano Corrente",
+    Mês,
+    "Mês Ano",
+    Quarter,
+    Semana,
+    "Semana do Ano"
+FROM [lib://DWH_QMAIS:DataFiles/DWH_Calendario.qvd]
+(qvd);
+
+LOAD
+    "%Filial CNPJ",
+    "Filail Estado",
+    "Filial CEP",
+    "Filial Cidade",
+    "Filial Endereco",
+    "Filial Nome",
+    Filial_Codigo
+FROM [lib://DWH_QMAIS:DataFiles/DWH_dim_Lojas.qvd]
+(qvd);
+
+LOAD
+    %Produto,
+    FlagMelhoresPiores,
+    "[Produto Classificacao_Desc]" as Classificacao_Desc,
+    "[Produto Classificacao_ID]" as Classificacao_ID,
+    "[Produto Coleção Agrupado]" as Colecao_Agr,
+    "[Produto Coleção Unous]" as Colecao_Unous,
+    "[Produto Colecao_Desc]" as Colecao_Desc,
+    "[Produto Colecao_ID]" as Colecao_ID,
+    "[Produto Cor_Desc]" as Cor_Desc,
+    "[Produto Cor_ID]" as Cor_ID,
+    "[Produto Codigo]" as ProdutoCodigo,
+    "[Produto Linha_Desc]" as Linha_Desc,
+    "[Produto Linha_ID]" as Linha_ID,
+    "[Produto Marca]" as ProdutoMarca,
+    "[Produto Marca_ID]" as ProdutoMarca_ID,
+    "[Produto Marca|Referencia]" as Marca|Referencia,
+    "[Produto Marca|Referencia|Cor]" as Marca|Referencia|Cor,
+    "[Produto NCM]" as ProdutoNCM,
+    "[Produto Nome]" as ProdutoNome,
+    "[Produto Referencia]" as ProdutoReferencia,
+    "[Produto Setor F/M]" as Setor_FM,
+    "[Produto Setor_Desc]" as Setor_Desc,
+    "[Produto Setor_ID]" as Setor_ID,
+    "[Produto Tamanho_Desc]" as Tamanho_Desc,
+    "[Produto Tamanho_ID]" as Tamanho_ID
+FROM [lib://DWH_QMAIS:DataFiles/DWH_dim_Produtos.qvd]
+(qvd);
+//------------------------------------------------------------------------------------------------------------------------//
+3. Gráficos
+/* Gráficos   								       		     					......*/
+LET vSelDim    = 'Mês'										 							;	
+LET vSelMed    = 'Qtd'										 							;
+LET vHistorico = '0'										 							;
+LET vMarca     = '1'														 			;
+LET vColeção   = '0'										 							;
+LET vLinha     = '0'										 							;
+LET vSetor     = '0'										 							; 
+LET vClass     = '0'										 							;
+LET vRef       = '0'										 							;
+LET vCód       = '0'										 							;
+LET vTam       = '0'										 							;
+LET vCor       = '0'																	;
+LET vDesc	   = '0'																	
+
+/**************************************************************************************/
